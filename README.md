@@ -14,7 +14,7 @@ ArXiv Reader is an Electron-based desktop application that helps researchers and
 
 Check out our demo video to see ArXiv Reader in action:
 
-[Watch Demo Video](assets/arxiv%20reader%20demo0.mov)
+[Watch Demo Video](https://www.youtube.com/watch?v=7ns_ENT4y8Y)
 
 ## Installation
 
