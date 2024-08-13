@@ -138,7 +138,7 @@ function MainApp() {
         boxSizing: 'border-box', 
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', width: '100%' }}>
-          <h1 style={{ color: '#FFA500', borderBottom: '2px solid #FFA500', paddingBottom: '10px', textAlign: 'center', width: '100%' }}>arXiv Digest</h1>
+          <h1 style={{ color: '#FFA500', borderBottom: '2px solid #FFA500', paddingBottom: '10px', textAlign: 'center', width: '100%' }}>arXiv Reader</h1>
           <button onClick={openSettings} style={{
             background: 'none',
             border: 'none',

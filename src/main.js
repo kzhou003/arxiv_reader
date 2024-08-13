@@ -206,9 +206,17 @@ ipcMain.handle('run-python-script', async (event, params) => {
         ? path.join(process.resourcesPath, 'python', 'python')
         : 'python'; // Use system Python for development
 
+      // Determine the correct path to the Python script
+      const scriptPath = app.isPackaged
+        ? path.join(process.resourcesPath, 'src', 'app.py')
+        : path.join(__dirname, '..', '..', 'src', 'app.py');
+
+      console.log(`App isPackaged: ${app.isPackaged}`);
+      console.log(`Python executable: ${pythonExecutable}`);
+      console.log(`Script path: ${scriptPath}`);
 
       const pythonProcess = spawn(pythonExecutable, [
-        path.join(app.isPackaged ? process.resourcesPath : __dirname, 'src', 'app.py'),
+        scriptPath,
         params.topic,
         params.subjects,
         params.interests,

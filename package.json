@@ -5,7 +5,7 @@
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
-    "start": "cp postinstall.js .webpack/main/ && source src/venv/bin/activate && electron-forge start",
+    "start": "source src/venv/bin/activate && electron-forge start",
     "package": "electron-builder --dir",
     "make": "electron-builder",
     "build": "electron-builder --mac",
