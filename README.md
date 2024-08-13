@@ -12,9 +12,9 @@ ArXiv Reader is an Electron-based desktop application that helps researchers and
 
 ## Installation
 
-Download the latest version of ArXiv Reader for your operating system:
+Download the latest version of ArXiv Reader:
 
-- macOS: [ArXiv Reader.dmg](<link-to-your-release>)
+- macOS: [ArXiv Reader.dmg](https://github.com/kzhou003/arxiv_reader/releases)
 
 ## Usage
 
