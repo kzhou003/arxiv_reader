@@ -46,7 +46,7 @@ const createWindow = () => {
     minWidth: 1200,
     minHeight: 800,
     backgroundColor: '#f0f0f0', // Match the background color from App.jsx
-    icon: path.join(__dirname, '../assets/icon.icns')
+    icon: path.join(__dirname, '../assets/icon.png')
   });
 
   // and load the index.html of the app.
