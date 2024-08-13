@@ -36,9 +36,11 @@ build/Release
 node_modules/
 dist/
 out/
+build/
 jspm_packages/
 .webpack/
 python/
+src/results.json
 
 # TypeScript v1 declaration files
 typings/
