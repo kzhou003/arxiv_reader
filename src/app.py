@@ -176,7 +176,16 @@ class PapersRanker:
     @staticmethod
     def encode_prompt(query, prompt_papers):
         logging.info(f"{Fore.CYAN}Encoding prompt for {len(prompt_papers)} papers{Style.RESET_ALL}")
-        prompt = open("src/relevancy_prompt.txt").read() + "\n"
+        # Use absolute path to find the relevancy_prompt.txt file
+        prompt_file_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'relevancy_prompt.txt')
+        try:
+            with open(prompt_file_path, 'r') as f:
+                prompt = f.read() + "\n"
+        except FileNotFoundError:
+            logging.error(f"{Fore.RED}relevancy_prompt.txt not found at {prompt_file_path}{Style.RESET_ALL}")
+            # Provide a default prompt or raise an error
+            prompt = "Please analyze the following papers and provide a relevancy score (1-10) and reasons for the match:\n\n"
+
         prompt += query['interest']
 
         for idx, paper in enumerate(prompt_papers):
@@ -297,7 +306,9 @@ def main(topic: str, subjects: List[str], interests: str, max_results: int, api_
 
 if __name__ == "__main__":
     # Parse command-line arguments
+    script_dir = os.path.dirname(os.path.abspath(__file__))
     logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+    logging.info(f"Script directory: {script_dir}")
     logging.info("Logging initialized")
     topic = sys.argv[1]
     subjects = get_subjects([sys.argv[2]])  # Treat the entire subject as a single item
