@@ -7,8 +7,7 @@
   "scripts": {
     "start": "source src/venv/bin/activate && electron-forge start",
     "package": "electron-builder --dir",
-    "make": "electron-builder",
-    "build": "electron-builder --mac",
+    "make": "electron-forge make",
     "publish": "electron-builder --publish always",
     "lint": "echo \"No linting configured\""
   },
@@ -19,7 +18,14 @@
       "category": "public.app-category.utilities",
       "target": [
         "dmg"
-      ]
+      ],
+      "icon": "assets/icon.icns"
+    },
+    "win": {
+      "icon": "assets/icon.ico"
+    },
+    "linux": {
+      "icon": "assets/icon.png"
     },
     "dmg": {
       "contents": [
@@ -35,13 +41,7 @@
         }
       ]
     },
-    "files": [
-      "**/*",
-      "!**/*.py",
-      "!src/venv${/*}",
-      "postinstall.js"
-    ],
-    "extraResources": [
+   "extraResources": [
       "postinstall.js",
       {
         "from": "src",
@@ -50,14 +50,22 @@
           "**/*",
           "!venv${/*}"
         ]
-      },
-      {
-        "from": "src/venv/bin",
-        "to": "python/",
-        "filter": [
-          "**/*"
-        ]
       }
+    ],
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
+      "!**/src/venv${/*}"
     ]
   },
   "devDependencies": {
