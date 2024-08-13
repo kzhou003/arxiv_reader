@@ -216,7 +216,7 @@ function runPythonScript(args) {
     const pythonExecutable = getPythonPath();
     const scriptPath = app.isPackaged
       ? path.join(process.resourcesPath, 'src', 'app.py')
-      : path.join(__dirname, 'app.py');
+      : path.join('src', 'app.py');
 
     console.log(`Python executable: ${pythonExecutable}`);
     console.log(`Script path: ${scriptPath}`);

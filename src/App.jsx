@@ -2,7 +2,7 @@ import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import Settings from './Settings.jsx';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faCog, faTimes } from '@fortawesome/free-solid-svg-icons';
+import { faCog, faTimes, faRobot } from '@fortawesome/free-solid-svg-icons';
 
 const topics = {
     "Astrophysics": ["Astrophysics of Galaxies", "Cosmology and Nongalactic Astrophysics", "Earth and Planetary Astrophysics", "High Energy Astrophysical Phenomena", "Instrumentation and Methods for Astrophysics", "Solar and Stellar Astrophysics"],
@@ -138,25 +138,27 @@ function MainApp() {
         boxSizing: 'border-box', 
       }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px', width: '100%' }}>
-          <h1 style={{ color: '#FFA500', borderBottom: '2px solid #FFA500', paddingBottom: '10px', textAlign: 'center', width: '100%' }}>arXiv Reader</h1>
-          <button onClick={openSettings} style={{
-            background: 'none',
-            border: 'none',
-            cursor: 'pointer',
-            fontSize: '24px',
-            color: '#FFA500',
-          }}>
-            <FontAwesomeIcon icon={faCog} />
-          </button>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', width: '100%' }}>
+            <button onClick={openSettings} style={{
+              background: 'none',
+              border: 'none',
+              cursor: 'pointer',
+              fontSize: '24px',
+              color: '#FFA500',
+              transition: 'transform 0.2s',
+            }}>
+              <FontAwesomeIcon icon={faCog} />
+            </button>
+          </div>
         </div>
   
         <div style={{ display: 'flex', gap: '20px', flexGrow: 1, overflow: 'hidden' }}>
           <div style={{ flex: '1', display: 'flex', flexDirection: 'column', minWidth: '300px', maxWidth: '400px' }}>
             <form onSubmit={handleSubmit} style={{
-              backgroundColor: 'white',
+              backgroundColor: '#FFF5E6',
               padding: '20px',
               borderRadius: '8px',
-              boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+              boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
               display: 'flex',
               flexDirection: 'column',
               height: '100%',
@@ -170,7 +172,7 @@ function MainApp() {
                   setTopic(e.target.value);
                   setSubjects([]);
                 }}
-                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ddd', color: '#333' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd', color: '#333', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7em top 50%', backgroundSize: '.65em auto' }}
               >
                 <option value="">Select a topic</option>
                 {Object.keys(topics).map((t) => (
@@ -184,7 +186,7 @@ function MainApp() {
                 <select
                   id="subject"
                   onChange={(e) => addSubject(e.target.value)}
-                  style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ddd', color: '#333' }}
+                  style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd', color: '#333', appearance: 'none', backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%23007CB2%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right .7em top 50%', backgroundSize: '.65em auto' }}
                 >
                   <option value="">Select a subject</option>
                   {topics[topic].map((s) => (
@@ -200,7 +202,8 @@ function MainApp() {
                       borderRadius: '15px',
                       display: 'flex',
                       alignItems: 'center',
-                      fontSize: '14px'
+                      fontSize: '14px',
+                      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
                     }}>
                       {subject}
                       <button
@@ -211,7 +214,8 @@ function MainApp() {
                           color: 'white',
                           marginLeft: '5px',
                           cursor: 'pointer',
-                          fontSize: '14px'
+                          fontSize: '14px',
+                          transition: 'transform 0.2s',
                         }}
                       >
                         <FontAwesomeIcon icon={faTimes} />
@@ -227,7 +231,16 @@ function MainApp() {
                 id="interests"
                 value={interests}
                 onChange={(e) => setInterests(e.target.value)}
-                style={{ width: '100%', padding: '8px', borderRadius: '4px', border: '1px solid #ddd', flexGrow: 1, resize: 'none', color: '#333' }}
+                style={{ 
+                  width: '100%', 
+                  padding: '10px', 
+                  borderRadius: '4px', 
+                  border: '1px solid #ddd', 
+                  flexGrow: 1, 
+                  resize: 'none', 
+                  color: '#333',
+                  alignSelf: 'center'
+                }}
                 placeholder="Describe your specific interests..."
               />
             </div>
@@ -238,25 +251,81 @@ function MainApp() {
                 id="maxResults"
                 value={maxResults}
                 onChange={(e) => setMaxResults(parseInt(e.target.value))}
-                style={{ width: '80px', padding: '8px', borderRadius: '4px', border: '1px solid #ddd', color: '#333' }}
+                style={{ width: '100%', padding: '10px', borderRadius: '4px', border: '1px solid #ddd', color: '#333' }}
                 min="1"
                 max="100"
               />
             </div>
-            <button type="submit" disabled={isLoading} style={{
-              padding: '10px 20px',
-              backgroundColor: '#FFA500',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer',
-              fontSize: '16px',
-              fontWeight: 'bold',
-              transition: 'background-color 0.3s',
-              opacity: isLoading ? 0.7 : 1,
-            }}>
-              {isLoading ? 'Generating...' : 'Generate Papers'}
+            <button 
+              type="submit" 
+              disabled={isLoading} 
+              style={{
+                padding: '12px 24px',
+                backgroundColor: isLoading ? '#FFD700' : '#FFA500',
+                color: isLoading ? '#333' : 'white',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: isLoading ? 'not-allowed' : 'pointer',
+                fontSize: '18px',
+                fontWeight: 'bold',
+                transition: 'all 0.3s ease',
+                boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',
+                width: '100%',
+                position: 'relative',
+                overflow: 'hidden',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              <span style={{
+                display: 'inline-block',
+                marginRight: isLoading ? '30px' : '0',
+                transition: 'margin 0.3s ease',
+              }}>
+                {isLoading ? 'Searching...' : 'Search Papers'}
+              </span>
+              {isLoading && (
+                <div style={{
+                  width: '20px',
+                  height: '20px',
+                  border: '3px solid #FFA500',
+                  borderTop: '3px solid #FFD700',
+                  borderRadius: '50%',
+                  animation: 'spin 1s linear infinite',
+                  position: 'absolute',
+                  top: '50%',
+                  right: '24px',
+                  transform: 'translateY(-50%)',
+                }}></div>
+              )}
+              {isLoading && (
+                <div style={{
+                  position: 'absolute',
+                  bottom: '0',
+                  left: '0',
+                  width: '100%',
+                  height: '4px',
+                  backgroundColor: '#FFD700',
+                  overflow: 'hidden',
+                }}>
+                  <div style={{
+                    width: '100%',
+                    height: '100%',
+                    backgroundColor: '#FFA500',
+                    animation: 'progress 10s linear',
+                  }}></div>
+                </div>
+              )}
             </button>
+            <style>
+              {`
+                @keyframes spin {
+                  0% { transform: translate(-50%, -50%) rotate(0deg); }
+                  100% { transform: translate(-50%, -50%) rotate(360deg); }
+                }
+              `}
+            </style>
           </form>
           {error && (
             <div style={{
@@ -274,7 +343,7 @@ function MainApp() {
         <div style={{ flex: '2', overflow: 'hidden', display: 'flex', flexDirection: 'column', minWidth: '600px' }}>
           {papers.length > 0 && (
             <div style={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'white', borderRadius: '8px', boxShadow: '0 2px 4px rgba(0,0,0,0.1)', padding: '20px' }}>
-              <h2 style={{ color: '#333', borderBottom: '2px solid #333', paddingBottom: '10px', marginBottom: '15px' }}>Generated Papers</h2>
+              <h2 style={{ color: '#333', borderBottom: '2px solid #333', paddingBottom: '10px', marginBottom: '15px' }}>Selected Papers for your interests</h2>
               <div style={{ flexGrow: 1, overflowY: 'auto' }}>
                 {papers.map((paper, index) => (
                   <div key={index} style={{
