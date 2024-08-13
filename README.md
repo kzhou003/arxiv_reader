@@ -18,7 +18,7 @@ Check out our demo video to see ArXiv Reader in action:
 
 ## Acknowledgements
 
-This project was inspired by [ArxivDigest](https://github.com/AutoLLM/ArxivDigest). 
+This project was inspired by [AutoLLM/ArxivDigest](https://github.com/AutoLLM/ArxivDigest). 
 
 ## Installation
 
