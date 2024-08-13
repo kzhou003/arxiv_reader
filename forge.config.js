@@ -4,6 +4,15 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    // Add these lines
+    extraResource: [
+      './src',
+      './postinstall.js'
+    ],
+    ignore: [
+      /^\/src\/venv\/((?!bin|lib|include).)*$/,
+      '!src/relevancy_prompt.txt'
+    ],
   },
   rebuildConfig: {},
   "config": {
@@ -19,6 +28,12 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {},
+    },
+    {
+      name: '@electron-forge/maker-dmg',
+      config: {
+        format: 'ULFO'
+      }
     },
     {
       name: '@electron-forge/maker-zip',

@@ -1,8 +1,9 @@
 const { app, BrowserWindow, Menu, ipcMain } = require('electron');
 const path = require('node:path');
-const { spawn } = require('child_process');
+const { spawn, execFile } = require('child_process');
 
 const fs = require('fs').promises;
+const fsSync = require('fs');
 
 const userDataPath = app.getPath('userData');
 const storeFile = path.join(userDataPath, 'store.json');
@@ -190,76 +191,104 @@ ipcMain.on('close-settings-window', () => {
   }
 });
 
+function getPythonPath() {
+  if (app.isPackaged) {
+    const possiblePaths = [
+      path.join(process.resourcesPath, 'src', 'venv', 'bin', 'python3'),
+      path.join(process.resourcesPath, 'src', 'venv', 'bin', 'python'),
+      path.join(process.resourcesPath, 'src', 'venv', 'Scripts', 'python.exe'),
+    ];
+
+    for (const pythonPath of possiblePaths) {
+      if (fsSync.existsSync(pythonPath)) {  // Use fsSync.existsSync instead of fs.existsSync
+        return pythonPath;
+      }
+    }
+
+    throw new Error('Python executable not found in the packaged app');
+  } else {
+    return 'python3'; // or 'python' depending on your system
+  }
+}
+
+function runPythonScript(args) {
+  return new Promise((resolve, reject) => {
+    const pythonExecutable = getPythonPath();
+    const scriptPath = app.isPackaged
+      ? path.join(process.resourcesPath, 'src', 'app.py')
+      : path.join(__dirname, 'app.py');
+
+    console.log(`Python executable: ${pythonExecutable}`);
+    console.log(`Script path: ${scriptPath}`);
+
+    const pythonProcess = spawn(pythonExecutable, [scriptPath, ...args]);
+
+    let stdoutData = '';
+    let stderrData = '';
+
+    pythonProcess.stdout.on('data', (data) => {
+      stdoutData += data.toString();
+      console.log(`Python stdout: ${data}`);
+    });
+
+    pythonProcess.stderr.on('data', (data) => {
+      stderrData += data.toString();
+      console.error(`Python stderr: ${data}`);
+    });
+
+    pythonProcess.on('close', (code) => {
+      console.log(`Python process exited with code ${code}`);
+      if (code === 0) {
+        resolve(stdoutData);
+      } else {
+        reject(new Error(`Python script exited with code ${code}. Stderr: ${stderrData}`));
+      }
+    });
+
+    pythonProcess.on('error', (error) => {
+      console.error(`Failed to start Python process: ${error}`);
+      reject(error);
+    });
+  });
+}
+
 // ... other existing code ...
 ipcMain.handle('run-python-script', async (event, params) => {
-  return new Promise(async (resolve, reject) => {
-    try {
-      const store = await readStore();
-      const apiKey = store.apiKey;
+  try {
+    const store = await readStore();
+    const apiKey = store.apiKey;
 
-      if (!apiKey) {
-        throw new Error('API key is not set');
-      }
-
-      // Use the bundled Python executable
-      const pythonExecutable = app.isPackaged
-        ? path.join(process.resourcesPath, 'python', 'python')
-        : 'python'; // Use system Python for development
-
-      // Determine the correct path to the Python script
-      const scriptPath = app.isPackaged
-        ? path.join(process.resourcesPath, 'src', 'app.py')
-        : path.join(__dirname, '..', '..', 'src', 'app.py');
-
-      console.log(`App isPackaged: ${app.isPackaged}`);
-      console.log(`Python executable: ${pythonExecutable}`);
-      console.log(`Script path: ${scriptPath}`);
-
-      const pythonProcess = spawn(pythonExecutable, [
-        scriptPath,
-        params.topic,
-        params.subjects,
-        params.interests,
-        params.maxResults.toString(),
-        apiKey
-      ]);
-
-      let stdoutData = '';
-      let stderrData = '';
-
-      pythonProcess.stdout.on('data', (data) => {
-        stdoutData += data.toString();
-      });
-
-      pythonProcess.stderr.on('data', (data) => {
-        stderrData += data.toString();
-      });
-
-      pythonProcess.on('close', async (code) => {
-        console.log(`Python process exited with code ${code}`);
-        console.log(`Python stdout: ${stdoutData}`);
-        console.log(`Python stderr: ${stderrData}`);
-
-        if (code === 0) {
-          try {
-            const filePath = path.join(app.getAppPath(), 'src', 'results.json');
-            console.log(`Attempting to read file at: ${filePath}`);
-            const data = await fs.readFile(filePath, 'utf8');
-            console.log(`File contents: ${data}`);
-            const results = JSON.parse(data);
-            resolve(results);
-          } catch (error) {
-            console.error(`Error reading or parsing results file: ${error.message}`);
-            reject(new Error(`Failed to read or parse results file: ${error.message}`));
-          }
-        } else {
-          reject(new Error(`Python script exited with code ${code}. Stderr: ${stderrData}`));
-        }
-      });
-    } catch (error) {
-      reject(error);
+    if (!apiKey) {
+      throw new Error('API key is not set');
     }
-  });
+
+    const args = [
+      params.topic,
+      params.subjects,
+      params.interests,
+      params.maxResults.toString(),
+      apiKey
+    ];
+
+    const output = await runPythonScript(args);
+    
+    try {
+      const filePath = app.isPackaged
+        ? path.join(process.resourcesPath, 'src', 'results.json')
+        : path.join(app.getAppPath(), 'src', 'results.json');
+      console.log(`Attempting to read file at: ${filePath}`);
+      const data = await fs.readFile(filePath, 'utf8');
+      console.log(`File contents: ${data}`);
+      const results = JSON.parse(data);
+      return results;
+    } catch (error) {
+      console.error(`Error reading or parsing results file: ${error.message}`);
+      throw new Error(`Failed to read or parse results file: ${error.message}`);
+    }
+  } catch (error) {
+    console.error('Error in run-python-script:', error);
+    throw error;
+  }
 });
 
 // Add this at the end of the file to handle unhandled promise rejections
