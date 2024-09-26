@@ -204,7 +204,7 @@ class PapersRanker:
         if response is None:
             logging.warning(f"{Fore.YELLOW}Received null response{Style.RESET_ALL}")
             return []
-        json_items = response['message']['content'].replace("\n\n", "\n").split("\n")
+        json_items = response.message.content.replace("\n\n", "\n").split("\n")
         pattern = r"^\d+\. |\\"
         try:
             score_items = [
@@ -231,16 +231,26 @@ class PapersRanker:
         return selected_data
 
     @staticmethod
-    def rank(papers: List[Paper], query: Dict, api_key: str, model_name="gpt-3.5-turbo-16k", threshold_score=0, num_paper_in_prompt=4, temperature=0.4, top_p=1.0) -> List[Paper]:
+    def rank(papers: List[Paper], query: Dict, api_key: str, model_name="Meta-Llama-3.1-8B-Instruct", threshold_score=0, num_paper_in_prompt=4, temperature=0.4, top_p=1.0) -> List[Paper]:
         logging.info(f"{Fore.CYAN}Ranking {len(papers)} papers{Style.RESET_ALL}")
-        openai.api_key = api_key
+        
         ranked_papers = []
         for i in tqdm.tqdm(range(0, len(papers), num_paper_in_prompt)):
             prompt_papers = papers[i:i+num_paper_in_prompt]
             prompt = PapersRanker.encode_prompt(query, prompt_papers)
             
             logging.info(f"{Fore.CYAN}Sending request to OpenAI API for batch {i//num_paper_in_prompt + 1}{Style.RESET_ALL}")
-            response = openai.ChatCompletion.create(
+            
+            #TODO: add generic fix to make it work with both API keys
+            use_sambanova = len(api_key) <= 37
+            if use_sambanova == True:
+                client = openai.OpenAI(api_key=api_key, base_url="https://api.sambanova.ai/v1")
+                model_name = "Meta-Llama-3.1-405B-Instruct"
+            else:
+                client = openai.OpenAI(api_key=api_key)
+                model_name = "gpt-3.5-turbo-16k"
+
+            response = client.chat.completions.create(
                 model=model_name,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=temperature,
@@ -249,7 +259,7 @@ class PapersRanker:
                 max_tokens=128*num_paper_in_prompt,
             )
             logging.info(f"{Fore.CYAN}Received response from OpenAI API for batch {i//num_paper_in_prompt + 1}{Style.RESET_ALL}")
-            batch_data = PapersRanker.post_process_response(prompt_papers, response['choices'][0], threshold_score)
+            batch_data = PapersRanker.post_process_response(prompt_papers, response.choices[0], threshold_score)
             ranked_papers.extend(batch_data)
 
         logging.info(f"{Fore.CYAN}Ranked {len(ranked_papers)} papers{Style.RESET_ALL}")
