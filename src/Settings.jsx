@@ -58,7 +58,7 @@ function Settings() {
       <form onSubmit={handleSubmit}>
         <div style={{ marginBottom: '20px' }}>
           <label htmlFor="apiKey" style={{ display: 'block', marginBottom: '8px', fontWeight: 'bold', color: '#555' }}>
-            OpenAI API Key:
+            SambaNova API Key:
           </label>
           <input
             type="password"
